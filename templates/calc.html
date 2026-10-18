@@ -1,0 +1,295 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Calcs
+{% endblock %}
+{% block main %}
+    <div class="container py-4">
+        <div class="row mb-4">
+            <div class="bg-white shadow-sm rounded-3 p-4">
+                <h2>Calculator</h2>
+                <div class="mx-auto" style="max-width: 400px;">
+                    <form action="/submit_calculation" method="post">
+                        <input id="calc_display" class="form-control mb-3" name="calc_display" type="text" autocomplete = "off">
+                        <div class="row g-2 p">
+                            <div class="col-6">
+                                <button class="btn btn-light w-100" type="button" onclick="document.getElementById('calc_display').value = document.getElementById('calc_display').value.slice(0, -1)">Delete</button>
+                            </div>
+                            <div class="col-3">
+                                <button class="btn btn-light w-100" type="button" onclick="document.getElementById('calc_display').value += '('">(</button>
+                            </div>
+                            <div class="col-3">
+                                <button class="btn btn-light w-100" type="button" onclick="document.getElementById('calc_display').value += ')'">)</button>
+                            </div>
+                            </div>
+                        <div class="row g-2 p">
+                            <div class="col-3">
+                                <button class="btn btn-light w-100" type="button" onclick="document.getElementById('calc_display').value += '7'">7</button>
+                            </div>
+                            <div class="col-3">
+                                <button class="btn btn-light w-100" type="button" onclick="document.getElementById('calc_display').value += '8'">8</button>
+                            </div>
+                            <div class="col-3">
+                                <button class="btn btn-light w-100" type="button" onclick="document.getElementById('calc_display').value += '9'">9</button>
+                            </div>
+                            <div class="col-3">
+                                <button class="btn btn-light w-100" type="button" onclick="document.getElementById('calc_display').value += '÷'">÷</button>
+                            </div>
+                        </div>
+                        <div class="row g-2 p">
+                            <div class="col-3">
+                                <button class="btn btn-light w-100" type="button" onclick="document.getElementById('calc_display').value += '4'">4</button>
+                            </div>
+                            <div class="col-3">
+                                <button class="btn btn-light w-100" type="button" onclick="document.getElementById('calc_display').value += '5'">5</button>
+                            </div>
+                            <div class="col-3">
+                                <button class="btn btn-light w-100" type="button" onclick="document.getElementById('calc_display').value += '6'">6</button>
+                            </div>
+                            <div class="col-3">
+                                <button class="btn btn-light w-100" type="button" onclick="document.getElementById('calc_display').value += '&times'">&times</button>
+                            </div>
+                        </div>
+                        <div class="row g-2 p">
+                            <div class="col-3">
+                                <button class="btn btn-light w-100" type="button" onclick="document.getElementById('calc_display').value += '1'">1</button>
+                            </div>
+                            <div class="col-3">
+                                <button class="btn btn-light w-100" type="button" onclick="document.getElementById('calc_display').value += '2'">2</button>
+                            </div>
+                            <div class="col-3">
+                                <button class="btn btn-light w-100" type="button" onclick="document.getElementById('calc_display').value += '3'">3</button>
+                            </div>
+                            <div class="col-3">
+                                <button class="btn btn-light w-100" type="button" onclick="document.getElementById('calc_display').value += '-'">-</button>
+                            </div>
+                        </div>
+                        <div class="row g-2 p">
+                            <div class="col-6">
+                                <button class="btn btn-light w-100" type="submit" >=</button>
+                            </div>
+                             <div class="col-3">
+                                <button class="btn btn-light w-100" type="button" onclick="document.getElementById('calc_display').value += '.'">.</button>
+                            </div>
+                            <div class="col-3">
+                                <button class="btn btn-light w-100" type="button" onclick="document.getElementById('calc_display').value += '+'">+</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container py-4">
+        <div class="row mb-4">
+            <div class="table-responsive bg-white shadow-sm rounded-3 p-4">
+                <h2>History</h2>
+                {% if history_status == "empty" %}
+                    <p>You have no calculations. Use the calculator to submit one!</p>
+                {% elif history_status == "not_empty" %}
+                    <table class="table table-striped" style="min-width: 850px; table-layout: fixed;">
+                        <thead>
+                            <tr>
+                                <th style="width: 5%"></th>
+                                <th style="width: 10%">Name</th>
+                                <th style="width: 8%"></th>
+                                <th style="width: 20%">Time</th>
+                                <th style="width: 30%">Expression</th>
+                                <th style="width: 8%"></th>
+                                <th style="width: 12%">Result</th>
+                                <th style="width: 7%"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in history %}
+                                <tr class="align-middle" onfocusout="if (!this.contains(event.relatedTarget)) { editName('cancel', this); editExpression('cancel', this); }">
+                                    <td>
+                                        <div class="d-flex">
+                                            <button type="button" name="edit_name" class="btn px-1" onclick="editName('edit', this)" style="visibility: visible">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        <form action="/rename_row" method="post" id="rename-form-{{ row[0] }}" class="d-flex gap-1" style="overflow-x: auto; max-width: 100%;">
+                                            <div class="d-flex">
+                                                <input type="hidden" name="row_id" value="{{ row[0] }}">
+                                                <input type="text" name="rename_input" value="{{ row[1] or '' }}" class="input-box" style="pointer-events: none" placeholder="Name" autocomplete="off" onfocus="editName('edit', this)">
+                                            </div>
+                                        </form>
+                                    </td>
+
+                                    <td>
+                                        <div class="d-flex">
+                                            <button type="submit" form="rename-form-{{ row[0] }}" name="rename_submit" class="btn" style="visibility: hidden">
+                                                <i class="bi bi-check-lg"></i>
+                                            </button>
+                                            <button type="button" name="rename_cancel" class="btn" style="visibility: hidden" onclick="editName('cancel', this)" >
+                                                <i class="bi bi-x-lg"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        {{ row[2] }}
+                                    </td>
+
+                                    <td>
+                                        <form action="/update_expression" method="post" id="expression-form-{{ row[0] }}">
+                                            <input type="hidden" name="row_id" value="{{ row[0] }}">
+                                            <div class="d-flex justify-content-center gap-1">
+                                                {% for part in row[3] %}
+                                                    <input class="form-control input-box expression-part" name="expression_input" type="text" value="{{ part }}" size="{{ part | length}}" autocomplete="off" oninput="this.size = Math.max(this.value.length, 1)" onfocus="editExpression('edit', this)" onblur="
+                                                    if (this.value === '') {
+                                                        this.remove();
+                                                    }
+                                                    else if (this.value !== this.defaultValue) {
+                                                        this.style.color = 'red';
+                                                    }
+                                                    else {
+                                                        this.style.color = '';
+                                                    }
+                                                    ">
+                                                {% endfor %}
+                                            </div>
+                                        </form>
+                                    </td>
+
+                                    <td>
+                                        <div class="d-flex">
+                                            <button type="submit" form="expression-form-{{ row[0] }}" name="expression_submit" class="btn px-1" style="visibility: hidden">
+                                                <i class="bi bi-check-lg"></i>
+                                            </button>
+                                            <button type="button" name="expression_cancel" class="btn px-1" style="visibility: hidden" onclick="editExpression('cancel', this)">
+                                                    <i class="bi bi-x-lg"></i>
+                                            </button>
+                                            <button type="button" name="expression_add" class="btn px-1" style="visibility: hidden" onclick="editExpression('add_part', this)">
+                                                <i class="bi bi-plus-lg"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        {{ row[4] }}
+                                    </td>
+
+                                    <td>
+                                        <form action="/delete_row" method="post">
+                                            <input type="hidden" name="row_id" value="{{ row[0] }}">
+                                            <button type="submit" class="btn">
+                                                <i class="bi bi-trash3"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+<!-- SCRIPT -->
+    <script>
+        // Keyboard input listener
+        document.addEventListener("keydown", function(event) {
+            if (event.metaKey || event.ctrlKey || event.altKey) {
+                return;
+            }
+            if (document.activeElement.tagName !== "INPUT") {
+                let expression_input = document.getElementById("calc_display");
+                let key_pressed = event.key;
+                if (key_pressed === "Enter") {
+                    event.preventDefault();
+                    expression_input.form.requestSubmit();
+                }
+                if (document.activeElement.tagName !== "calc_display") {
+                    let keys = "0123456789+-/*.()";
+                    if (keys.includes(key_pressed)) {
+                        event.preventDefault();
+                        expression_input.value += key_pressed;
+                    }
+                    else if (key_pressed === "Backspace") {
+                        event.preventDefault();
+                        expression_input.value = expression_input.value.slice(0, -1);
+                    }
+                }
+            }
+        });
+
+        function editName(command, element) {
+            let form = element.closest("tr");
+            let pencil = form.querySelector("button[name='edit_name']");
+            let rename_input = form.querySelector("input[name='rename_input']");
+            let rename_submit = form.querySelector("button[name='rename_submit']");
+            let rename_cancel = form.querySelector("button[name='rename_cancel']");
+
+            if (command === "edit") {
+                pencil.style.visibility = "hidden";
+                rename_input.readOnly = false;
+                rename_input.className = "form-control input-box";
+                rename_input.focus();
+                rename_submit.style.visibility = "visible";
+                rename_cancel.style.visibility = "visible";
+            }
+            else if (command === "cancel") {
+                pencil.style.visibility = "visible";
+                rename_input.value = rename_input.defaultValue;
+                rename_input.readOnly = true;
+                rename_input.className = "input-box";
+                rename_input.style.visibility = "visible";
+                rename_submit.style.visibility = "hidden";
+                rename_cancel.style.visibility = "hidden";
+            }
+        }
+
+        function editExpression(command, element) {
+            let row = element.closest("tr");
+            let part_inputs = row.querySelectorAll("input[name='expression_input']");
+            let expression_submit = row.querySelector("button[name='expression_submit']");
+            let expression_cancel = row.querySelector("button[name='expression_cancel']");
+            let expression_add = row.querySelector("button[name='expression_add']");
+
+            if (command === "edit") {
+                expression_submit.style.visibility = "visible";
+                expression_cancel.style.visibility = "visible";
+                expression_add.style.visibility = "visible";
+                for (let part_input of part_inputs) {
+                    part_input.readOnly = false;
+                    part_input.className = "form-control input-box expression-part";
+                }
+            }
+            else if (command === "cancel") {
+                expression_submit.style.visibility = "hidden";
+                expression_cancel.style.visibility = "hidden";
+                expression_add.style.visibility = "hidden";
+                for (let part_input of part_inputs) {
+                    part_input.readOnly = true;
+                    part_input.className = "form-control input-box expression-part";
+                }
+            }
+            else if (command == "add_part") {
+                let new_part = document.createElement("input");
+                new_part.className = "form-control input-box expression-part";
+                new_part.name = "expression_input";
+                new_part.type = "text";
+                new_part.size = 1;
+                new_part.autocomplete = "off";
+                new_part.oninput = function() {
+                    this.size = Math.max(this.value.length, 1);
+                }
+                new_part.onblur = function() {
+                    if (this.value === "") {
+                        this.remove();
+                    }
+                }
+                let full_expression = row.querySelector("input[name='expression_input']").parentElement;
+                full_expression.appendChild(new_part);
+                new_part.focus();
+            }
+        }
+    </script>
+
+{% endblock %}
