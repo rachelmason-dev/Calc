@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <title>{% block title %}{% endblock %}</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="/static/styles.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.2/font/bootstrap-icons.min.css">
+    </head>
+    <body class="text-middle">
+        <div class="container">
+            <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
+                {% set current_path = request.path %}
+                {% if current_path != '/login' %}
+                    <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
+                        <img src="/static/calclogo.png" alt="Logo" class="nav-logo">
+                    </a>
+                {% endif %}
+                <ul class="nav nav-pills ms-auto">
+                    {% if "user_id" in session %}
+                        <li class="nav-item">
+                            <a href="/" class="nav-link {% if current_path == '/' %}active{% endif %}">Calcs</a>
+                        </li>
+                        {% if current_path != "/logout" and current_path != "/login" and current_path != "/register" %}
+                            <li class="nav-item">
+                                <a href="/logout" class="nav-link ">Logout</a>
+                            </li>
+                        {% endif %}
+
+                    {% else %}
+                        {% if current_path != "/login" %}
+                            <li class="nav-item">
+                                <a href="/login" class="nav-link">Login</a>
+                            </li>
+                        {% endif %}
+                        {% if current_path != "/register" %}
+                            <li class="nav-item">
+                                <a href="/register" class="nav-link">Register</a>
+                            </li>
+                        {% endif %}
+                    {% endif %}
+                </ul>
+            </header>
+        </div>
+        {% with alerts = get_flashed_messages() %}
+            {% if alerts %}
+                {% for alert in alerts %}
+                <div class="alert alert-danger">
+                    {{ alert }}
+                </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <main class="py-4">
+            {% block main %}
+            {% endblock %}
+        </main>
+    </body>
+</html>
