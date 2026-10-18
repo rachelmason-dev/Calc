@@ -1,0 +1,42 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Login
+{% endblock %}
+{% block main %}
+    <div class="row align-items-center py-5">
+        <h1 class="display-6 fw-bold lh-1 text-body-emphasis">Please sign in</h1>
+        <div class="col-md-10 mx-auto col-lg-5">
+            <form class=" rounded-3 bd-body-tertiary" action="/login" method="post">
+                <img src="/static/calclogo.png" alt="Logo" class="logo">
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="username" name="username" placeholder="Username" autocomplete="off">
+                        <label for="username">Name</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Password" autocomplete="off">
+                        <label for="password">Password</label>
+                    </div>
+                <label class="d-block mb-3">
+                    Show password
+                    <input class="form-check-input" id="password_checkbox" type="checkbox" value="" onclick="password_visibility()">
+                </label>
+                <button type="submit" class="btn btn-primary w-100 py-2">Login</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function password_visibility() {
+            let checkbox = document.getElementById("password_checkbox");
+            let password = document.getElementById("password");
+            if (checkbox.checked) {
+                password.type = "text";
+            }
+            else {
+                password.type = "password";
+            }
+        }
+    </script>
+{% endblock %}
