@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Register
+{% endblock %}
+{% block main %}
+    <div class="row align-items-center g-lg-5 py-5">
+        <h1 class="display-6 fw-bold lh-1 text-body-emphasis mb-3">Register for an account</h1>
+        <div class="col-md-10 mx-auto col-lg-5">
+            <form class="p-4 p-md-5 border rounded-3 bd-body-tertiary" action="/register" method="post">
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="username" name="username" placeholder="Name" autocomplete="off">
+                    <label for="username">Name</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Password" autocomplete="off">
+                    <label for="password">Password</label>
+                </div>
+            <label class="d-block mb-3">
+                Show password
+                <input class="form-check-input" id="password_checkbox" type="checkbox" value="" onclick="password_visibility()">
+            </label>
+            <button type="submit" class="btn btn-primary">Sign up</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function password_visibility() {
+            let checkbox = document.getElementById("password_checkbox");
+            let password = document.getElementById("password");
+            if (checkbox.checked) {
+                password.type = "text";
+            }
+            else {
+                password.type = "password";
+            }
+        }
+    </script>
+{% endblock %}
+
